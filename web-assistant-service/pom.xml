@@ -57,6 +57,8 @@
       <groupId>com.github.pradyothadavi</groupId>
       <artifactId>apiai-agent-interactor</artifactId>
       <version>0.0.1-SNAPSHOT</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/external-libs/apiai-agent-interactor-0.0.1-SNAPSHOT.jar</systemPath>
     </dependency>
   
     <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
