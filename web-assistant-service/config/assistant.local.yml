@@ -1,0 +1,49 @@
+swagger:
+  resourcePackage: in.adavi.pradyot.web.assistant.service.web
+
+server:
+  type: default
+  applicationContextPath: /assistant/api
+  adminContextPath: /assistant/admin
+  applicationConnectors:
+    - type: http
+      port: 9090
+  adminConnectors:
+    - type: http
+      port: 9091
+  requestLog:
+    appenders:
+      - type: file
+        currentLogFilename: /var/log/adavi/assistant/request.log
+        threshold: DEBUG
+        archive: true
+        archivedLogFilenamePattern: /var/log/adavi/assistant/request.log-%d.log.gz
+        archivedFileCount: 50
+        timeZone: IST
+
+logging:
+  level: INFO
+  loggers:
+    "com.flipkart": DEBUG
+
+  appenders:
+    - type: file
+      currentLogFilename:  /var/log/adavi/assistant/application.log
+      threshold: DEBUG
+      archive: true
+      archivedLogFilenamePattern:  /var/log/adavi/assistant/application-%d.log.gz
+      archivedFileCount: 5
+      timeZone: IST
+      logFormat: "%-5level [%date] [%thread] [%cyan(%logger{0})]: %message%n"
+    - type: console
+      threshold: DEBUG
+      timeZone: IST
+      logFormat: "%-5level [%date] [%thread] [%cyan(%logger{0})]: %message%n"
+
+apiAiAgentInteractor:
+  aiAgentConfiguration:
+    agentApiKey:
+      clientAccessToken: 7c6cec46314e4a0891c5c25d657e65ee
+    supportedLanguage: English
+    nluPlatformUrl: https://api.api.ai/api/
+    apiVersion: 20150910
