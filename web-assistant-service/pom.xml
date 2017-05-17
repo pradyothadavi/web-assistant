@@ -16,6 +16,13 @@
     <maven.deploy.skip>true</maven.deploy.skip>
   </properties>
   
+  <repositories>
+    <repository>
+      <id>pradyot-mvn-repo-snapshots</id>
+      <url>https://github.com/pradyothadavi/pradyot-mvn-repo/raw/master/snapshots</url>
+    </repository>
+  </repositories>
+  
   <dependencies>
     <dependency>
       <groupId>in.adavi.pradyot</groupId>
@@ -57,8 +64,6 @@
       <groupId>com.github.pradyothadavi</groupId>
       <artifactId>apiai-agent-interactor</artifactId>
       <version>0.0.1-SNAPSHOT</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/external-libs/apiai-agent-interactor-0.0.1-SNAPSHOT.jar</systemPath>
     </dependency>
   
     <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
