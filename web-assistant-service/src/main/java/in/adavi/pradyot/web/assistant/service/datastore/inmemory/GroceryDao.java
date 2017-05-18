@@ -62,7 +62,7 @@ public class GroceryDao implements IGroceryFulfillmentDao {
   
   @Override
   public Khaata getGroceryKhaata(String userId) {
-    return null;
+    return khaataMap.get(userId);
   }
   
   @Override
