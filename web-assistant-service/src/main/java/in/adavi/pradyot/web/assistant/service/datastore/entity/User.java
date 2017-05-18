@@ -1,28 +1,17 @@
-package in.adavi.pradyot.web.assistant.api.model;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.validation.constraints.NotNull;
+package in.adavi.pradyot.web.assistant.service.datastore.entity;
 
 /**
- * Represents the user using the application
- *
- * @author pradyot.ha
+ * Created by pradyot.ha on 17/05/17.
  */
 public class User {
-  @NotNull
-  @JsonProperty("user_id")
+  
   private String userId;
   
-  @NotNull
-  @JsonProperty("first_name")
   private String firstName;
   
-  @JsonProperty("last_name")
   private String lastName;
   
-  @JsonProperty("gender")
-  private Gender gender;
+  private String gender;
   
   public String getUserId() {
     return userId;
@@ -48,16 +37,16 @@ public class User {
     this.lastName = lastName;
   }
   
-  public Gender getGender() {
+  public String getGender() {
     return gender;
   }
   
-  public void setGender(Gender gender) {
+  public void setGender(String gender) {
     this.gender = gender;
   }
   
   @Override
   public String toString() {
-    return "User{" + "userId='" + userId + '\'' + ", firstName='" + firstName + '\'' + ", lastName='" + lastName + '\'' + ", gender=" + gender + '}';
+    return "User{" + "userId='" + userId + '\'' + ", firstName='" + firstName + '\'' + ", lastName='" + lastName + '\'' + ", gender='" + gender + '\'' + '}';
   }
 }

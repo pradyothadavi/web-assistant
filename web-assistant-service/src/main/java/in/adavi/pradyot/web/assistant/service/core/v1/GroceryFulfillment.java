@@ -1,8 +1,10 @@
 package in.adavi.pradyot.web.assistant.service.core.v1;
 
-import com.github.pradyothadavi.model.FulfillmentServiceResponse;
-import com.github.pradyothadavi.model.QueryResponse;
+
+import com.github.pradyothadavi.model.Context;
 import com.github.pradyothadavi.model.Result;
+import com.github.pradyothadavi.response.FulfillmentServiceResponse;
+import com.github.pradyothadavi.response.QueryResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
@@ -11,6 +13,7 @@ import in.adavi.pradyot.web.assistant.service.datastore.IGroceryFulfillmentDao;
 import in.adavi.pradyot.web.assistant.service.datastore.ISpeechResponseDao;
 import in.adavi.pradyot.web.assistant.service.datastore.entity.GroceryItem;
 import in.adavi.pradyot.web.assistant.service.datastore.entity.GroceryList;
+import in.adavi.pradyot.web.assistant.service.datastore.entity.Khaata;
 import in.adavi.pradyot.web.assistant.service.datastore.entity.UnitWeight;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,33 +52,86 @@ public class GroceryFulfillment implements FulfillmentService {
     FulfillmentServiceResponse fulfillmentServiceResponse = null;
     Result result = queryResponse.getResult();
     String action = result.getAction();
+    List<Context> contexts = result.getContexts();
+    Context userContext = getUserContext(contexts);
+    String speechTemplate;
+    String speech;
+    
     switch (action){
+      
+      case "checkout":
+        iGroceryFulfillmentDao.checkoutGroceryList(userContext.getParameters().get("firstName").toString());
+        iGroceryFulfillmentDao.debitKhaata(userContext.getParameters().get("firstName").toString());
+        Khaata khaata = iGroceryFulfillmentDao.getGroceryKhaata(userContext.getParameters().get("firstName").toString());
+        
+        break;
+        
       case "add-item":
-        Map<String,Object> parameters = result.getParameters();
-        GroceryItem groceryItem = new GroceryItem();
-        groceryItem.setItemName(parameters.get("grocery-item").toString());
-        groceryItem.setListingId(parameters.get("grocery-item").toString());
-        
-        String unitWeightInString = parameters.get("unit-weight").toString();
-        UnitWeight unitWeight = null;
-       
-        Gson gson = new GsonBuilder().create();
-        unitWeight = gson.fromJson(unitWeightInString,UnitWeight.class);
-        groceryItem.setUnitWeight(unitWeight);
-        
-        iGroceryFulfillmentDao.addItem(groceryItem);
-  
         GroceryList groceryList = iGroceryFulfillmentDao.getList("default");
+        if(null != userContext){
+          groceryList = iGroceryFulfillmentDao.getList(userContext.getParameters().get("firstName").toString());
+        }
+        Map<String,Object> parameters = result.getParameters();
+        String item = parameters.get("grocery-item").toString();
+        if(nonAvailableGroceryItems.contains(item))
+        {
+          speech = "Hey, "+item+" is currently out of stock. I will notify you once it is back in stock.";
+        } else {
+          GroceryItem groceryItem = new GroceryItem();
+          groceryItem.setItemName(item);
+          groceryItem.setListingId(item);
+          String unitWeightInString = parameters.get("unit-weight").toString();
+          UnitWeight unitWeight = null;
+  
+          Gson gson = new GsonBuilder().create();
+          unitWeight = gson.fromJson(unitWeightInString,UnitWeight.class);
+          groceryItem.setUnitWeight(unitWeight);
+  
+          iGroceryFulfillmentDao.addItem(groceryItem,groceryList);
+  
+          speechTemplate = iSpeechResponseDao.getSpeechTemplate(result.getMetadata().getIntentId());
+          speech = String.format(speechTemplate,String.valueOf(groceryItem.getUnitWeight().getAmount()),groceryItem.getUnitWeight().getUnit(),groceryItem.getItemName());
+        }
         
-        String speechTemplate = iSpeechResponseDao.getSpeechTemplate(result.getMetadata().getIntentId());
-        String speech = String.format(speechTemplate,String.valueOf(groceryItem.getUnitWeight().getAmount()),groceryItem.getUnitWeight().getUnit(),groceryItem.getItemName());
         
         fulfillmentServiceResponse = new FulfillmentServiceResponse();
         fulfillmentServiceResponse.setSpeech(speech);
         fulfillmentServiceResponse.setDisplayText(speech);
         fulfillmentServiceResponse.setSource("grocery-fulfillment");
         fulfillmentServiceResponse.setData(groceryList);
+        break;
+        
+      case "input.welcome":
+        if(null != userContext){
+          iGroceryFulfillmentDao.createList(userContext.getParameters().get("firstName").toString());
+          
+          speechTemplate = iSpeechResponseDao.getSpeechTemplate(result.getMetadata().getIntentId());
+          speech = String.format(speechTemplate,userContext.getParameters().get("firstName"));
+          fulfillmentServiceResponse = new FulfillmentServiceResponse();
+          fulfillmentServiceResponse.setSpeech(speech);
+          fulfillmentServiceResponse.setDisplayText(speech);
+          fulfillmentServiceResponse.setSource("grocery-fulfillment");
+          fulfillmentServiceResponse.setData(null);
+        }
+        break;
+        
+      default:
+        fulfillmentServiceResponse = new FulfillmentServiceResponse();
+        fulfillmentServiceResponse.setSpeech("Sorry I could not understand that. Can you elaborate ?");
+        fulfillmentServiceResponse.setDisplayText("Sorry I could not understand that. Can you elaborate ?");
+        fulfillmentServiceResponse.setSource("grocery-fulfillment");
+        fulfillmentServiceResponse.setData(null);
     }
     return fulfillmentServiceResponse;
+  }
+  
+  private Context getUserContext(List<Context> contexts) {
+    for (Context context:
+         contexts) {
+      if("user-context".equals(context.getName())){
+        return context;
+      }
+    }
+    return null;
   }
 }
