@@ -64,6 +64,12 @@ public class GroceryFulfillment implements FulfillmentService {
         iGroceryFulfillmentDao.debitKhaata(userContext.getParameters().get("firstName").toString());
         Khaata khaata = iGroceryFulfillmentDao.getGroceryKhaata(userContext.getParameters().get("firstName").toString());
         
+        speech = "Your order is confirmed. So far you have availed INR "+khaata.getCreditAvailed()+" credit out of INR "+khaata.getCreditLimit();
+        fulfillmentServiceResponse = new FulfillmentServiceResponse();
+        fulfillmentServiceResponse.setSpeech(speech);
+        fulfillmentServiceResponse.setDisplayText(speech);
+        fulfillmentServiceResponse.setSource("grocery-fulfillment");
+        fulfillmentServiceResponse.setData(null);
         break;
         
       case "add-item":
