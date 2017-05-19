@@ -8,6 +8,10 @@ import com.github.pradyothadavi.response.QueryResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
+import in.adavi.pradyot.web.assistant.api.model.fulfillment.facebook.ContentType;
+import in.adavi.pradyot.web.assistant.api.model.fulfillment.facebook.Message;
+import in.adavi.pradyot.web.assistant.api.model.fulfillment.facebook.QuickReply;
+import in.adavi.pradyot.web.assistant.api.response.FacebookResponse;
 import in.adavi.pradyot.web.assistant.service.core.FulfillmentService;
 import in.adavi.pradyot.web.assistant.service.datastore.IGroceryFulfillmentDao;
 import in.adavi.pradyot.web.assistant.service.datastore.ISpeechResponseDao;
@@ -113,11 +117,31 @@ public class GroceryFulfillment implements FulfillmentService {
           
           speechTemplate = iSpeechResponseDao.getSpeechTemplate(result.getMetadata().getIntentId());
           speech = String.format(speechTemplate,userContext.getParameters().get("firstName"));
+  
+          QuickReply quickReply1 = new QuickReply();
+          quickReply1.setContentType(ContentType.TEXT.getContentType());
+          quickReply1.setTitle("Quick Reply 01");
+  
+          QuickReply quickReply2 = new QuickReply();
+          quickReply2.setContentType(ContentType.TEXT.getContentType());
+          quickReply2.setTitle("Quick Reply 02");
+          
+          List<QuickReply> quickReplies = new ArrayList<>();
+          quickReplies.add(quickReply1);
+          quickReplies.add(quickReply2);
+          
+          Message message = new Message();
+          message.setText(speech);
+          message.setQuickReplies(quickReplies);
+          
+          FacebookResponse facebookResponse = new FacebookResponse();
+          facebookResponse.setData(message);
+          
           fulfillmentServiceResponse = new FulfillmentServiceResponse();
           fulfillmentServiceResponse.setSpeech(speech);
           fulfillmentServiceResponse.setDisplayText(speech);
           fulfillmentServiceResponse.setSource("grocery-fulfillment");
-          fulfillmentServiceResponse.setData(null);
+          fulfillmentServiceResponse.setData(facebookResponse);
         }
         break;
         
