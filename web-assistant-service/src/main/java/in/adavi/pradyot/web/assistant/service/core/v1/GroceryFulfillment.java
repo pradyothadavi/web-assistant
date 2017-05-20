@@ -102,13 +102,31 @@ public class GroceryFulfillment implements FulfillmentService {
           speechTemplate = iSpeechResponseDao.getSpeechTemplate(result.getMetadata().getIntentId());
           speech = String.format(speechTemplate,String.valueOf(groceryItem.getUnitWeight().getAmount()),groceryItem.getUnitWeight().getUnit(),groceryItem.getItemName());
         }
-        
+  
+        QuickReply quickReply1 = new QuickReply();
+        quickReply1.setContentType(ContentType.TEXT.getContentType());
+        quickReply1.setTitle("Quick Reply 01");
+  
+        QuickReply quickReply2 = new QuickReply();
+        quickReply2.setContentType(ContentType.TEXT.getContentType());
+        quickReply2.setTitle("Quick Reply 02");
+  
+        List<QuickReply> quickReplies = new ArrayList<>();
+        quickReplies.add(quickReply1);
+        quickReplies.add(quickReply2);
+  
+        Message message = new Message();
+        message.setText(speech);
+        message.setQuickReplies(quickReplies);
+  
+        FacebookResponse facebookResponse = new FacebookResponse();
+        facebookResponse.setData(message);
         
         fulfillmentServiceResponse = new FulfillmentServiceResponse();
         fulfillmentServiceResponse.setSpeech(speech);
         fulfillmentServiceResponse.setDisplayText(speech);
         fulfillmentServiceResponse.setSource("grocery-fulfillment");
-        fulfillmentServiceResponse.setData(groceryList);
+        fulfillmentServiceResponse.setData(facebookResponse);
         break;
         
       case "input.welcome":
@@ -117,31 +135,12 @@ public class GroceryFulfillment implements FulfillmentService {
           
           speechTemplate = iSpeechResponseDao.getSpeechTemplate(result.getMetadata().getIntentId());
           speech = String.format(speechTemplate,userContext.getParameters().get("firstName"));
-  
-          QuickReply quickReply1 = new QuickReply();
-          quickReply1.setContentType(ContentType.TEXT.getContentType());
-          quickReply1.setTitle("Quick Reply 01");
-  
-          QuickReply quickReply2 = new QuickReply();
-          quickReply2.setContentType(ContentType.TEXT.getContentType());
-          quickReply2.setTitle("Quick Reply 02");
-          
-          List<QuickReply> quickReplies = new ArrayList<>();
-          quickReplies.add(quickReply1);
-          quickReplies.add(quickReply2);
-          
-          Message message = new Message();
-          message.setText(speech);
-          message.setQuickReplies(quickReplies);
-          
-          FacebookResponse facebookResponse = new FacebookResponse();
-          facebookResponse.setData(message);
           
           fulfillmentServiceResponse = new FulfillmentServiceResponse();
           fulfillmentServiceResponse.setSpeech(speech);
           fulfillmentServiceResponse.setDisplayText(speech);
           fulfillmentServiceResponse.setSource("grocery-fulfillment");
-          fulfillmentServiceResponse.setData(facebookResponse);
+          fulfillmentServiceResponse.setData(null);
         }
         break;
         
