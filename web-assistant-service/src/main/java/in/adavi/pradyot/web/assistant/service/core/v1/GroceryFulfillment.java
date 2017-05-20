@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
 import in.adavi.pradyot.web.assistant.api.model.fulfillment.facebook.ContentType;
 import in.adavi.pradyot.web.assistant.api.model.fulfillment.facebook.Message;
+import in.adavi.pradyot.web.assistant.api.model.fulfillment.facebook.Messaging;
 import in.adavi.pradyot.web.assistant.api.model.fulfillment.facebook.QuickReply;
 import in.adavi.pradyot.web.assistant.api.response.FacebookResponse;
 import in.adavi.pradyot.web.assistant.service.core.FulfillmentService;
@@ -119,8 +120,11 @@ public class GroceryFulfillment implements FulfillmentService {
         message.setText(speech);
         message.setQuickReplies(quickReplies);
   
+        Messaging messaging = new Messaging();
+        messaging.setMessage(message);
+  
         FacebookResponse facebookResponse = new FacebookResponse();
-        facebookResponse.setData(message);
+        facebookResponse.setData(messaging);
         
         fulfillmentServiceResponse = new FulfillmentServiceResponse();
         fulfillmentServiceResponse.setSpeech(speech);
