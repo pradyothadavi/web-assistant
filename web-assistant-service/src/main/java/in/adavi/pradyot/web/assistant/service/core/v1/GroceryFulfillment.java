@@ -130,7 +130,7 @@ public class GroceryFulfillment implements FulfillmentService {
         fulfillmentServiceResponse.setSpeech(speech);
         fulfillmentServiceResponse.setDisplayText(speech);
         fulfillmentServiceResponse.setSource("grocery-fulfillment");
-        fulfillmentServiceResponse.setData(facebookResponse);
+        fulfillmentServiceResponse.setData(null);
         break;
         
       case "input.welcome":
