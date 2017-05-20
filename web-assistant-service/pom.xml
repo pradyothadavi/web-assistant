@@ -69,7 +69,7 @@
     <dependency>
       <groupId>com.github.pradyothadavi</groupId>
       <artifactId>apiai-agent-bundle</artifactId>
-      <version>0.0.2-SNAPSHOT</version>
+      <version>0.0.3-SNAPSHOT</version>
     </dependency>
   
     <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
