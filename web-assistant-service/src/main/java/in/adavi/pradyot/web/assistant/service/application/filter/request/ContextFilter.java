@@ -33,9 +33,9 @@ public class ContextFilter implements ContainerRequestFilter {
       MDC.put(Constant.X_REQUEST_ID, requestId);
     }
     
-    String merchantId = containerRequestContext.getHeaderString(Constant.X_MERCHANT_ID);
+    String agentId = containerRequestContext.getHeaderString(Constant.X_AGENT_ID);
     
-    KiranaStoreContext.setMerchantId(merchantId);
+    KiranaStoreContext.setAgentId(agentId);
     KiranaStoreContext.setHeaders(headers);
   }
 }

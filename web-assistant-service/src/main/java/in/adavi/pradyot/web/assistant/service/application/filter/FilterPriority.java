@@ -5,7 +5,7 @@ package in.adavi.pradyot.web.assistant.service.application.filter;
  * Created by pradyot.ha on 16/05/17.
  */
 public final class FilterPriority {
-  public static final int MERCHANT_FILTER = 10;
+  public static final int AGENT_FILTER = 10;
   public static final int CLIENT_FILTER = 20;
   public static final int AUTHORIZATION_FILTER = 30;
   public static final int CONTEXT_FILTER = 100;

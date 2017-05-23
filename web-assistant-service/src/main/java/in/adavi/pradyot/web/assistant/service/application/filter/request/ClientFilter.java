@@ -21,24 +21,17 @@ import java.util.Map;
 @Priority(FilterPriority.CLIENT_FILTER)
 public class ClientFilter implements ContainerRequestFilter {
   
-  private static final Map<String, List<String>> merchantClientMappingWhitelist = new HashMap<>();
+  private static final Map<String, List<String>> agentClientMappingWhitelist = new HashMap<>();
   
   static {
     List<String> commonClients = new ArrayList<>();
     commonClients.add("cli");
     
     List<String> flipkartClients = new ArrayList<>();
+    flipkartClients.add("google-assistant");
     flipkartClients.addAll(commonClients);
     
-    List<String> kiranaStoreClients = new ArrayList<>();
-    kiranaStoreClients.addAll(commonClients);
-    
-    List<String> apiAiClients = new ArrayList<>();
-    apiAiClients.add("kirana-agent");
-    
-    merchantClientMappingWhitelist.put("Flipkart", flipkartClients);
-    merchantClientMappingWhitelist.put("kirana-store", kiranaStoreClients);
-    merchantClientMappingWhitelist.put("API.AI", apiAiClients);
+    agentClientMappingWhitelist.put("Flipkart", flipkartClients);
   }
   
   @Override
@@ -48,12 +41,12 @@ public class ClientFilter implements ContainerRequestFilter {
       return;
     }
     String clientId = containerRequestContext.getHeaderString(Constant.X_CLIENT_ID);
-    String merchantId = containerRequestContext.getHeaderString(Constant.X_MERCHANT_ID);
+    String agentId = containerRequestContext.getHeaderString(Constant.X_AGENT_ID);
     // Merchant filter has already checked for merchant identifier
-    List<String> whitelistedClients = merchantClientMappingWhitelist.get(merchantId);
+    List<String> whitelistedClients = agentClientMappingWhitelist.get(agentId);
     
     if (StringUtils.isEmpty(clientId) || whitelistedClients.isEmpty() || !whitelistedClients.contains(clientId)) {
-      Exception cause = new IllegalAccessException("No client identifier found for " + merchantId);
+      Exception cause = new IllegalAccessException("No client identifier found for " + agentId);
       throw new WebApplicationException(cause, Response.Status.FORBIDDEN);
     }
   }

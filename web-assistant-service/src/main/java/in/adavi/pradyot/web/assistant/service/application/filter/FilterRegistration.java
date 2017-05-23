@@ -3,7 +3,7 @@ package in.adavi.pradyot.web.assistant.service.application.filter;
 import in.adavi.pradyot.web.assistant.service.application.filter.request.AuthorizationFilter;
 import in.adavi.pradyot.web.assistant.service.application.filter.request.ClientFilter;
 import in.adavi.pradyot.web.assistant.service.application.filter.request.ContextFilter;
-import in.adavi.pradyot.web.assistant.service.application.filter.request.MerchantFilter;
+import in.adavi.pradyot.web.assistant.service.application.filter.request.AgentFilter;
 
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
@@ -16,8 +16,8 @@ public class FilterRegistration implements DynamicFeature {
   @Override
   public void configure(ResourceInfo resourceInfo, FeatureContext featureContext) {
     
-    if (useMerchantFilter(resourceInfo)) {
-      featureContext.register(MerchantFilter.class);
+    if (useAgentFilter(resourceInfo)) {
+      featureContext.register(AgentFilter.class);
     }
     if (useAuthorizationFilter(resourceInfo)) {
       featureContext.register(AuthorizationFilter.class);
@@ -42,7 +42,7 @@ public class FilterRegistration implements DynamicFeature {
     return true;
   }
   
-  private boolean useMerchantFilter(ResourceInfo resourceInfo) {
+  private boolean useAgentFilter(ResourceInfo resourceInfo) {
     return true;
   }
 }

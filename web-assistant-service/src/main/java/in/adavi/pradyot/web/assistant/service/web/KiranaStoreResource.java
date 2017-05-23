@@ -1,10 +1,10 @@
 package in.adavi.pradyot.web.assistant.service.web;
 
+import com.github.pradyothadavi.api.ai.model.Context;
+import com.github.pradyothadavi.api.ai.model.Event;
+import com.github.pradyothadavi.api.ai.request.QueryRequest;
+import com.github.pradyothadavi.api.ai.response.QueryResponse;
 import com.github.pradyothadavi.core.AiConversationService;
-import com.github.pradyothadavi.model.Context;
-import com.github.pradyothadavi.model.Event;
-import com.github.pradyothadavi.request.QueryRequest;
-import com.github.pradyothadavi.response.QueryResponse;
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;

@@ -8,20 +8,20 @@ import java.util.List;
  */
 public class KiranaStoreContext {
   
-  private static final ThreadLocal<String> threadLocalMerchantId = new ThreadLocal<>();
+  private static final ThreadLocal<String> threadLocalAgentId = new ThreadLocal<>();
   private static final ThreadLocal<MultivaluedMap<String, String>> threadLocalHeaders = new ThreadLocal<>();
   
   public static void reset() {
-    threadLocalMerchantId.remove();
+    threadLocalAgentId.remove();
     threadLocalHeaders.remove();
   }
   
-  public static String getMerchantId() {
-    return threadLocalMerchantId.get();
+  public static String getAgentId() {
+    return threadLocalAgentId.get();
   }
   
-  public static void setMerchantId(String merchantId) {
-    threadLocalMerchantId.set(merchantId);
+  public static void setAgentId(String agentId) {
+    threadLocalAgentId.set(agentId);
   }
   
   public static MultivaluedMap<String, String> getHeaders() {

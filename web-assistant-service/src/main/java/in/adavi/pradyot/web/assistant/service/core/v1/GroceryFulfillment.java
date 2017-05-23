@@ -1,34 +1,24 @@
 package in.adavi.pradyot.web.assistant.service.core.v1;
 
 
-import com.github.pradyothadavi.model.Context;
-import com.github.pradyothadavi.model.Result;
-import com.github.pradyothadavi.response.FulfillmentServiceResponse;
-import com.github.pradyothadavi.response.QueryResponse;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.github.pradyothadavi.api.ai.model.Context;
+import com.github.pradyothadavi.api.ai.model.Result;
+import com.github.pradyothadavi.api.ai.response.FulfillmentServiceResponse;
+import com.github.pradyothadavi.api.ai.response.QueryResponse;
+import com.github.pradyothadavi.google.action.model.*;
+import com.github.pradyothadavi.google.action.response.AppResponse;
 import com.google.inject.Inject;
-import in.adavi.pradyot.web.assistant.api.model.fulfillment.facebook.ContentType;
-import in.adavi.pradyot.web.assistant.api.model.fulfillment.facebook.Message;
-import in.adavi.pradyot.web.assistant.api.model.fulfillment.facebook.Messaging;
-import in.adavi.pradyot.web.assistant.api.model.fulfillment.facebook.QuickReply;
-import in.adavi.pradyot.web.assistant.api.model.fulfillment.gaction.*;
-import in.adavi.pradyot.web.assistant.api.response.FacebookResponse;
 import in.adavi.pradyot.web.assistant.api.response.GoogleActionResponse;
 import in.adavi.pradyot.web.assistant.service.core.FulfillmentService;
 import in.adavi.pradyot.web.assistant.service.datastore.IGroceryFulfillmentDao;
 import in.adavi.pradyot.web.assistant.service.datastore.ISpeechResponseDao;
-import in.adavi.pradyot.web.assistant.service.datastore.entity.GroceryItem;
-import in.adavi.pradyot.web.assistant.service.datastore.entity.GroceryList;
 import in.adavi.pradyot.web.assistant.service.datastore.entity.Khaata;
-import in.adavi.pradyot.web.assistant.service.datastore.entity.UnitWeight;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by pradyot.ha on 16/05/17.
@@ -81,109 +71,11 @@ public class GroceryFulfillment implements FulfillmentService {
         break;
         
       case "add-item":
-        GroceryList groceryList = iGroceryFulfillmentDao.getList("default");
-        if(null != userContext){
-          groceryList = iGroceryFulfillmentDao.getList(userContext.getParameters().get("firstName").toString());
-        }
-        Map<String,Object> parameters = result.getParameters();
-        String item = parameters.get("grocery-item").toString();
-        if(nonAvailableGroceryItems.contains(item))
-        {
-          speech = "Hey, "+item+" is currently out of stock. I will notify you once it is back in stock.";
-        } else {
-          GroceryItem groceryItem = new GroceryItem();
-          groceryItem.setItemName(item);
-          groceryItem.setListingId(item);
-          String unitWeightInString = parameters.get("unit-weight").toString();
-          UnitWeight unitWeight = null;
-  
-          Gson gson = new GsonBuilder().create();
-          unitWeight = gson.fromJson(unitWeightInString,UnitWeight.class);
-          groceryItem.setUnitWeight(unitWeight);
-  
-          iGroceryFulfillmentDao.addItem(groceryItem,groceryList);
-  
-          speechTemplate = iSpeechResponseDao.getSpeechTemplate(result.getMetadata().getIntentId());
-          speech = String.format(speechTemplate,String.valueOf(groceryItem.getUnitWeight().getAmount()),groceryItem.getUnitWeight().getUnit(),groceryItem.getItemName());
-        }
-  
-        QuickReply quickReply1 = new QuickReply();
-        quickReply1.setContentType(ContentType.TEXT.getContentType());
-        quickReply1.setTitle("Quick Reply 01");
-  
-        QuickReply quickReply2 = new QuickReply();
-        quickReply2.setContentType(ContentType.TEXT.getContentType());
-        quickReply2.setTitle("Quick Reply 02");
-  
-        List<QuickReply> quickReplies = new ArrayList<>();
-        quickReplies.add(quickReply1);
-        quickReplies.add(quickReply2);
-  
-        Message message = new Message();
-        message.setText(speech);
-        message.setQuickReplies(quickReplies);
-  
-        Messaging messaging = new Messaging();
-        messaging.setMessage(message);
-  
-        FacebookResponse facebookResponse = new FacebookResponse();
-        facebookResponse.setData(messaging);
-        
-        fulfillmentServiceResponse = new FulfillmentServiceResponse();
-        fulfillmentServiceResponse.setSpeech(speech);
-        fulfillmentServiceResponse.setDisplayText(speech);
-        fulfillmentServiceResponse.setSource("grocery-fulfillment");
-        fulfillmentServiceResponse.setData(null);
+        fulfillmentServiceResponse = getFulfillmentServiceResponse(action);
         break;
         
       case "input.welcome":
-        if(null != userContext || true){
-//          iGroceryFulfillmentDao.createList(userContext.getParameters().get("firstName").toString());
-//
-//          speechTemplate = iSpeechResponseDao.getSpeechTemplate(result.getMetadata().getIntentId());
-//          speech = String.format(speechTemplate,userContext.getParameters().get("firstName"));
-          
-          fulfillmentServiceResponse = new FulfillmentServiceResponse();
-          fulfillmentServiceResponse.setSpeech("Hey user from fulfillment, welcome to the grocery store. What items do you wish to order ?");
-          fulfillmentServiceResponse.setDisplayText("Hey user from fulfillment, welcome to the grocery store. What items do you wish to order ?");
-          fulfillmentServiceResponse.setSource("grocery-fulfillment");
-          fulfillmentServiceResponse.setData(null);
-  
-          SimpleResponse simpleResponse = new SimpleResponse();
-          simpleResponse.setTextToSpeech("Hey user from fulfillment, welcome to the grocery store. What items do you wish to order ?");
-          simpleResponse.setDisplayText("Hey user from fulfillment, welcome to the grocery store. What items do you wish to order ?");
-  
-          Item item1 = new Item();
-          item1.setSimpleResponse(simpleResponse);
-  
-          List<Item> items = new ArrayList<>();
-          items.add(item1);
-          
-          RichResponse richResponse = new RichResponse();
-          richResponse.setItems(items);
-          
-          InputPrompt inputPrompt = new InputPrompt();
-          inputPrompt.setRichInitialPrompt(richResponse);
-          
-          ExpectedIntent expectedIntent = new ExpectedIntent();
-          expectedIntent.setIntent("actions.intent.TEXT");
-          
-          List<ExpectedIntent> expectedIntents = new ArrayList<>();
-          expectedIntents.add(expectedIntent);
-  
-          ExpectedInput expectedInput = new ExpectedInput();
-          expectedInput.setInputPrompt(inputPrompt);
-          expectedInput.setPossibleIntents(expectedIntents);
-  
-          AppResponse appResponse = new AppResponse();
-          appResponse.setExpectUserResponse(true);
-          appResponse.setExpectedInputs(Arrays.asList(expectedInput));
-  
-          GoogleActionResponse googleActionResponse = new GoogleActionResponse();
-          googleActionResponse.setData(appResponse);
-          fulfillmentServiceResponse.setData(googleActionResponse);
-          
-        }
+        fulfillmentServiceResponse = getFulfillmentServiceResponse(action);
         break;
         
       default:
@@ -192,7 +84,72 @@ public class GroceryFulfillment implements FulfillmentService {
         fulfillmentServiceResponse.setDisplayText("Sorry I could not understand that. Can you elaborate ?");
         fulfillmentServiceResponse.setSource("grocery-fulfillment");
         fulfillmentServiceResponse.setData(null);
+        break;
     }
+    return fulfillmentServiceResponse;
+  }
+  
+  private FulfillmentServiceResponse getFulfillmentServiceResponse(String action) {
+    SimpleResponse simpleResponse = new SimpleResponse();
+  
+    BasicCard basicCard = new BasicCard();
+  
+    if(action.equals("input.welcome")){
+      simpleResponse.setDisplayText("Hey user from fulfillment, welcome to the grocery store. What items do you wish to order ?");
+      simpleResponse.setTextToSpeech("Hey user from fulfillment, welcome to the grocery store. What items do you wish to order ?");
+    } else {
+      simpleResponse.setTextToSpeech("Test Card");
+      Image image = new Image();
+      image.setUrl("http://placehold.it/350x150");
+      image.setAccessibilityText("Image alternate text");
+      image.setHeight(20);
+      image.setWidth(20);
+    
+      basicCard.setImage(image);
+      basicCard.setTitle("Test Card");
+      basicCard.setFormattedText("Test Card");
+    }
+  
+    Item item1 = new Item();
+    item1.setSimpleResponse(simpleResponse);
+    
+    Item item2 = new Item();
+    item2.setBasicCard(basicCard);
+  
+    List<Item> items = new ArrayList<>();
+    items.add(item1);
+    items.add(item2);
+  
+    RichResponse richResponse = new RichResponse();
+    richResponse.setItems(items);
+  
+    InputPrompt inputPrompt = new InputPrompt();
+    inputPrompt.setRichInitialPrompt(richResponse);
+  
+    ExpectedIntent expectedIntent = new ExpectedIntent();
+    expectedIntent.setIntent("actions.intent.TEXT");
+  
+    List<ExpectedIntent> expectedIntents = new ArrayList<>();
+    expectedIntents.add(expectedIntent);
+  
+    ExpectedInput expectedInput = new ExpectedInput();
+    expectedInput.setInputPrompt(inputPrompt);
+    expectedInput.setPossibleIntents(expectedIntents);
+  
+    AppResponse appResponse = new AppResponse();
+    appResponse.setExpectUserResponse(true);
+    appResponse.setExpectedInputs(Arrays.asList(expectedInput));
+  
+    GoogleActionResponse googleActionResponse = new GoogleActionResponse();
+    googleActionResponse.setData(appResponse);
+    
+    FulfillmentServiceResponse fulfillmentServiceResponse;
+    fulfillmentServiceResponse = new FulfillmentServiceResponse();
+    fulfillmentServiceResponse.setSpeech(simpleResponse.getTextToSpeech());
+    fulfillmentServiceResponse.setDisplayText(simpleResponse.getDisplayText());
+    fulfillmentServiceResponse.setSource("grocery-fulfillment");
+    fulfillmentServiceResponse.setData(googleActionResponse);
+    
     return fulfillmentServiceResponse;
   }
   

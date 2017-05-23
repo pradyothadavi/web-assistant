@@ -20,12 +20,10 @@ import java.util.Map;
 @Priority(FilterPriority.AUTHORIZATION_FILTER)
 public class AuthorizationFilter implements ContainerRequestFilter {
   
-  private static Map<String, String> merchantIdToKeyMapping = new HashMap<>();
+  private static Map<String, String> agentIdToKeyMapping = new HashMap<>();
   
   static {
-    merchantIdToKeyMapping.put("Flipkart", "Flipkart");
-    merchantIdToKeyMapping.put("kirana-store", "kirana-store");
-    merchantIdToKeyMapping.put("API.AI", "API.AI");
+    agentIdToKeyMapping.put("Flipkart", "Flipkart");
   }
   
   @Override
@@ -39,9 +37,9 @@ public class AuthorizationFilter implements ContainerRequestFilter {
       Exception cause = new IllegalAccessException("No authorization information found.");
       throw new WebApplicationException(cause, Response.Status.FORBIDDEN);
     }
-    String merchantId = containerRequestContext.getHeaderString(Constant.X_MERCHANT_ID);
-    StringBuffer keyReverse = new StringBuffer(merchantIdToKeyMapping.get(merchantId));
-    String input = merchantId + ":" + keyReverse.reverse().toString();
+    String agentId = containerRequestContext.getHeaderString(Constant.X_AGENT_ID);
+    StringBuffer keyReverse = new StringBuffer(agentIdToKeyMapping.get(agentId));
+    String input = agentId + ":" + keyReverse.reverse().toString();
     String base64encoded = Base64.getEncoder().encodeToString(input.getBytes());
     if (!base64encoded.equals(authorizationHeaderValue)) {
       Exception cause = new IllegalAccessException("No authorization information found.");

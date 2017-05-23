@@ -1,7 +1,8 @@
 package in.adavi.pradyot.web.assistant.service.web;
 
-import com.github.pradyothadavi.response.FulfillmentServiceResponse;
-import com.github.pradyothadavi.response.QueryResponse;
+
+import com.github.pradyothadavi.api.ai.response.FulfillmentServiceResponse;
+import com.github.pradyothadavi.api.ai.response.QueryResponse;
 import com.google.inject.Inject;
 import in.adavi.pradyot.web.assistant.service.core.FulfillmentService;
 import io.swagger.annotations.Api;

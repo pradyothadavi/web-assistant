@@ -15,15 +15,13 @@ import java.util.List;
 /**
  * Created by pradyot.ha on 16/05/17.
  */
-@Priority(FilterPriority.MERCHANT_FILTER)
-public class MerchantFilter implements ContainerRequestFilter {
+@Priority(FilterPriority.AGENT_FILTER)
+public class AgentFilter implements ContainerRequestFilter {
   
-  private static final List<String> whitelistedMerchantIds = new ArrayList<>();
+  private static final List<String> whitelistedAgentIds = new ArrayList<>();
   
   static {
-    whitelistedMerchantIds.add("kirana-store");
-    whitelistedMerchantIds.add("Flipkart");
-    whitelistedMerchantIds.add("API.AI");
+    whitelistedAgentIds.add("Flipkart");
   }
   
   @Override
@@ -32,8 +30,8 @@ public class MerchantFilter implements ContainerRequestFilter {
     if (containerRequestContext.getUriInfo().getPath().contains("swagger")) {
       return;
     }
-    String merchantId = containerRequestContext.getHeaderString(Constant.X_MERCHANT_ID);
-    if (null == merchantId || merchantId.isEmpty() || !whitelistedMerchantIds.contains(merchantId)) {
+    String agentId = containerRequestContext.getHeaderString(Constant.X_AGENT_ID);
+    if (null == agentId || agentId.isEmpty() || !whitelistedAgentIds.contains(agentId)) {
       Exception cause = new IllegalAccessException("No merchant identifier found");
       throw new WebApplicationException(cause, Response.Status.FORBIDDEN);
     }
