@@ -6,8 +6,7 @@ import com.github.pradyothadavi.ApiAiAgentInteractorModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import in.adavi.pradyot.web.assistant.service.application.filter.FilterRegistration;
-import in.adavi.pradyot.web.assistant.service.web.FulfillmentResource;
-import in.adavi.pradyot.web.assistant.service.web.KiranaStoreResource;
+import in.adavi.pradyot.web.assistant.service.web.ApiAiResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -38,11 +37,11 @@ public class WebAssistantApplication extends Application<WebAssistantConfigurati
   
   @Override
   public void run(WebAssistantConfiguration webAssistantConfiguration, Environment environment) throws Exception {
+    
     Injector injector = Guice.createInjector(new WebAssistantModule(webAssistantConfiguration),
                                              new ApiAiAgentInteractorModule(webAssistantConfiguration.getApiAiAgentInteractorConfiguration()));
-    
-    environment.jersey().register(injector.getInstance(KiranaStoreResource.class));
-    environment.jersey().register(injector.getInstance(FulfillmentResource.class));
+  
+    environment.jersey().register(injector.getInstance(ApiAiResource.class));
     environment.jersey().register(FilterRegistration.class);
   }
 }
