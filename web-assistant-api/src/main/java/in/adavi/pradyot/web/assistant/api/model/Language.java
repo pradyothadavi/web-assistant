@@ -10,7 +10,9 @@ public enum Language {
   Hindi("hi"),
   Kannada("kn"),
   Marathi("mr"),
-  Telugu("te");
+  Telugu("te"),
+  Tamil("ta"),
+  Malayalam("ml");
   
   Language(String languageTag) {
     this.languageTag = languageTag;
