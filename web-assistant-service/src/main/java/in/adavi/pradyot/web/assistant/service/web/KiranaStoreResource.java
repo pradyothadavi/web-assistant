@@ -13,7 +13,7 @@ import in.adavi.pradyot.web.assistant.api.model.Chat;
 import in.adavi.pradyot.web.assistant.api.model.User;
 import in.adavi.pradyot.web.assistant.api.model.UserPreference;
 import in.adavi.pradyot.web.assistant.service.application.Constant;
-import in.adavi.pradyot.web.assistant.service.application.context.KiranaStoreContext;
+import in.adavi.pradyot.web.assistant.service.application.context.ApiAiFulfillmentContext;
 import in.adavi.pradyot.web.assistant.service.core.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
@@ -69,7 +69,7 @@ public class KiranaStoreResource {
     } else {
       queryRequest.setQuery(chat.getMessage());
     }
-    String sessionId = null != chat.getSessionId() ? chat.getSessionId() : KiranaStoreContext.getHeaderValues(Constant.X_REQUEST_ID).get(0);
+    String sessionId = null != chat.getSessionId() ? chat.getSessionId() : ApiAiFulfillmentContext.getHeaderValues(Constant.X_REQUEST_ID).get(0);
     queryRequest.setSessionId(sessionId);
   
     User user = userService.getUserById(chat.getUser().getUserId());

@@ -1,7 +1,7 @@
 package in.adavi.pradyot.web.assistant.service.application.filter.request;
 
 import in.adavi.pradyot.web.assistant.service.application.Constant;
-import in.adavi.pradyot.web.assistant.service.application.context.KiranaStoreContext;
+import in.adavi.pradyot.web.assistant.service.application.context.ApiAiFulfillmentContext;
 import in.adavi.pradyot.web.assistant.service.application.filter.FilterPriority;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
@@ -21,7 +21,7 @@ public class ContextFilter implements ContainerRequestFilter {
   @Override
   public void filter(ContainerRequestContext containerRequestContext) throws IOException {
     
-    KiranaStoreContext.reset();
+    ApiAiFulfillmentContext.reset();
     
     MultivaluedMap<String, String> headers = containerRequestContext.getHeaders();
     
@@ -35,7 +35,7 @@ public class ContextFilter implements ContainerRequestFilter {
     
     String agentId = containerRequestContext.getHeaderString(Constant.X_AGENT_ID);
     
-    KiranaStoreContext.setAgentId(agentId);
-    KiranaStoreContext.setHeaders(headers);
+    ApiAiFulfillmentContext.setAgentId(agentId);
+    ApiAiFulfillmentContext.setHeaders(headers);
   }
 }

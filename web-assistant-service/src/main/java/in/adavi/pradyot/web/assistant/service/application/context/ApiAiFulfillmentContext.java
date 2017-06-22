@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by pradyot.ha on 16/05/17.
  */
-public class KiranaStoreContext {
+public class ApiAiFulfillmentContext {
   
   private static final ThreadLocal<String> threadLocalAgentId = new ThreadLocal<>();
   private static final ThreadLocal<MultivaluedMap<String, String>> threadLocalHeaders = new ThreadLocal<>();
