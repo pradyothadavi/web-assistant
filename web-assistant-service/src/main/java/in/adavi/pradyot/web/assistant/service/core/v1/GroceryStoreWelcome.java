@@ -16,7 +16,7 @@ public class GroceryStoreWelcome extends WelcomeStrategy {
   
   private static final Logger logger = LoggerFactory.getLogger(GroceryStoreWelcome.class);
   
-  private static final String GREETING_MSG = "Hey user, Welcome to the grocery store.";
+  private static final String GREETING_MSG = "Hey, Welcome to Flipkart grocery store.";
   
   @Override
   public FulfillmentServiceResponse greetUser(QueryResponse queryResponse) {

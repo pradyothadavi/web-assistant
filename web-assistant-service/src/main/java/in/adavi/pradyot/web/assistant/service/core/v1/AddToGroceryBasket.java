@@ -1,27 +1,52 @@
 package in.adavi.pradyot.web.assistant.service.core.v1;
 
-import com.github.pradyothadavi.api.ai.model.*;
-import com.github.pradyothadavi.api.ai.model.Button;
+import com.github.pradyothadavi.api.ai.model.Result;
 import com.github.pradyothadavi.api.ai.response.FulfillmentServiceResponse;
 import com.github.pradyothadavi.api.ai.response.QueryResponse;
-import com.github.pradyothadavi.google.action.model.*;
+import com.github.pradyothadavi.core.ProductService;
+import com.github.pradyothadavi.google.action.model.ExpectedInput;
+import com.github.pradyothadavi.google.action.model.ExpectedIntent;
+import com.github.pradyothadavi.google.action.model.InputPrompt;
+import com.github.pradyothadavi.google.action.model.Item;
+import com.github.pradyothadavi.google.action.model.RichResponse;
+import com.github.pradyothadavi.google.action.model.SimpleResponse;
 import com.github.pradyothadavi.google.action.response.AppResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.inject.Inject;
 import in.adavi.pradyot.web.assistant.api.response.GoogleActionResponse;
 import in.adavi.pradyot.web.assistant.service.core.AddToBasketStrategy;
 import in.adavi.pradyot.web.assistant.service.datastore.entity.GroceryItem;
 import in.adavi.pradyot.web.assistant.service.datastore.entity.GroceryList;
 import in.adavi.pradyot.web.assistant.service.datastore.entity.UnitWeight;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by pradyot.ha on 24/05/17.
  */
 public class AddToGroceryBasket extends AddToBasketStrategy {
   
+  private static final Logger logger = LoggerFactory.getLogger(AddToGroceryBasket.class);
+  
   private Map<String,GroceryList> groceryListMap;
+  
+  @Inject
+  private ProductService productService;
+
+  public ProductService getProductService() {
+    return productService;
+  }
+
+  public void setProductService(ProductService productService) {
+    this.productService = productService;
+  }
   
   @Override
   protected boolean addToCart() {
@@ -57,6 +82,10 @@ public class AddToGroceryBasket extends AddToBasketStrategy {
     groceryItem.setUnitWeight(unitWeight);
     
     groceryList.addGroceryItem(groceryItem);
+  
+//    Product product = productService.get(groceryItem.getItemName(),"Flipkart");
+//
+//    logger.info("Product : {}",product);
     
     SimpleResponse simpleResponse = new SimpleResponse();
     simpleResponse.setTextToSpeech("Added "+unitWeight.getAmount()+" "+unitWeight.getUnit()+" of "+groceryItem.getItemName()+" to basket. Next.");
@@ -66,29 +95,8 @@ public class AddToGroceryBasket extends AddToBasketStrategy {
     Item simpleItem = new Item();
     simpleItem.setSimpleResponse(simpleResponse);
     
-    BasicCard basicCard = new BasicCard();
-    basicCard.setTitle("Buy Now");
-    basicCard.setSubtitle("Pay Later");
-    
-    Image image = new Image();
-    image.setUrl("https://www.google.com/search?q=42");
-    
-    basicCard.setImage(image);
-  
-    com.github.pradyothadavi.google.action.model.Button btn = new com.github.pradyothadavi.google.action.model.Button();
-    btn.setTitle("Buy Now");
-    OpenUrlAction openUrlAction = new OpenUrlAction();
-    openUrlAction.setUrl("https://www.google.com/search?q=42");
-    btn.setOpenUrlAction(openUrlAction);
-    
-    basicCard.setButtons(Arrays.asList(btn));
-    
-    Item basicCardItem = new Item();
-    basicCardItem.setBasicCard(basicCard);
-    
     List<Item> items = new ArrayList<>();
     items.add(simpleItem);
-    items.add(basicCardItem);
     
     RichResponse richResponse = new RichResponse();
     richResponse.setItems(items);
@@ -112,16 +120,6 @@ public class AddToGroceryBasket extends AddToBasketStrategy {
   
     GoogleActionResponse googleActionResponse = new GoogleActionResponse();
     googleActionResponse.setData(appResponse);
-  
-    CardMessage cardMessage = new CardMessage();
-    cardMessage.setTitle("Buy Now");
-    cardMessage.setSubtitle("Pay Later");
-  
-    Button button = new Button();
-    button.setText("Buy Now");
-    button.setPostback("https://www.google.com");
-    
-    cardMessage.setButtons(Arrays.asList(button));
     
     FulfillmentServiceResponse fulfillmentServiceResponse;
     fulfillmentServiceResponse = new FulfillmentServiceResponse();
@@ -129,8 +127,7 @@ public class AddToGroceryBasket extends AddToBasketStrategy {
     fulfillmentServiceResponse.setDisplayText(simpleResponse.getDisplayText());
     fulfillmentServiceResponse.setSource("grocery-fulfillment");
     fulfillmentServiceResponse.setData(googleActionResponse);
-    fulfillmentServiceResponse.setResponseMessages(Arrays.asList(cardMessage));
-  
+    
     return fulfillmentServiceResponse;
   }
 }
