@@ -4,6 +4,7 @@ import com.github.pradyothadavi.api.ai.response.FulfillmentServiceResponse;
 import com.github.pradyothadavi.api.ai.response.QueryResponse;
 import com.google.inject.Inject;
 import in.adavi.pradyot.web.assistant.service.application.fulfillment.Webhook;
+import io.dropwizard.hibernate.UnitOfWork;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
@@ -39,6 +40,7 @@ public class ApiAiResource {
   }
   
   @POST
+  @UnitOfWork
   public Response fulfillRequest(@ApiParam(value = "API version", allowableValues = "v1", required = true) @PathParam("api_version") String apiVersion,
                                  @ApiParam(value = "X-Merchant-Id", required = true) @HeaderParam("X-Merchant-Id") String merchantId,
                                  @ApiParam(value = "X-Authorization", required = true) @HeaderParam("X-Authorization") String auth,

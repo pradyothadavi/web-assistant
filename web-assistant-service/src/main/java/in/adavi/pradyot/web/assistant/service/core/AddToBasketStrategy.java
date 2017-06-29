@@ -10,21 +10,23 @@ import in.adavi.pradyot.web.assistant.service.application.fulfillment.Fulfillmen
 public abstract class AddToBasketStrategy implements FulfillmentStrategy {
   
   private QueryResponse queryResponse;
+  private boolean isVerifiedUser;
+  private boolean isAddToCart;
   
   @Override
   public FulfillmentServiceResponse fulfillWish(QueryResponse queryResponse) {
     this.queryResponse = queryResponse;
-    boolean isVerifiedUser = verifyUser();
+    this.isVerifiedUser = verifyUser();
     if(isVerifiedUser) {
-      boolean isAddToCart = addToCart();
+      this.isAddToCart = addToCart(this.queryResponse);
     }
-    FulfillmentServiceResponse fulfillmentServiceResponse = ask(this.queryResponse);
+    FulfillmentServiceResponse fulfillmentServiceResponse = ask(this.queryResponse,this.isAddToCart);
     return fulfillmentServiceResponse;
   }
   
-  protected abstract boolean addToCart();
+  protected abstract boolean addToCart(QueryResponse queryResponse);
   
   protected abstract boolean verifyUser();
   
-  public abstract FulfillmentServiceResponse ask(QueryResponse queryResponse);
+  public abstract FulfillmentServiceResponse ask(QueryResponse queryResponse, boolean isAddToCart);
 }

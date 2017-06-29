@@ -8,6 +8,7 @@ import in.adavi.pradyot.web.assistant.service.application.context.ApiAiFulfillme
 import in.adavi.pradyot.web.assistant.service.application.fulfillment.FulfillmentStrategy;
 import in.adavi.pradyot.web.assistant.service.application.fulfillment.Webhook;
 import in.adavi.pradyot.web.assistant.service.core.AddToBasketStrategy;
+import in.adavi.pradyot.web.assistant.service.core.CheckoutStrategy;
 import in.adavi.pradyot.web.assistant.service.core.WelcomeStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +22,13 @@ public class ApiAiWebhook extends Webhook {
   
   private WelcomeStrategy welcomeStrategy;
   private AddToBasketStrategy addToBasketStrategy;
+  private CheckoutStrategy checkoutStrategy;
   
   @Inject
-  public ApiAiWebhook(WelcomeStrategy welcomeStrategy, AddToBasketStrategy addToBasketStrategy) {
+  public ApiAiWebhook(WelcomeStrategy welcomeStrategy, AddToBasketStrategy addToBasketStrategy, CheckoutStrategy checkoutStrategy) {
     this.welcomeStrategy = welcomeStrategy;
     this.addToBasketStrategy = addToBasketStrategy;
+    this.checkoutStrategy = checkoutStrategy;
   }
   
   @Override
@@ -49,7 +52,12 @@ public class ApiAiWebhook extends Webhook {
         fulfillmentStrategy = welcomeStrategy;
         break;
       case "add-item":
-        fulfillmentStrategy= addToBasketStrategy;
+        fulfillmentStrategy = addToBasketStrategy;
+        break;
+      case "checkout":
+      case "checkout.checkout-yes":
+      case "payment":
+        fulfillmentStrategy = checkoutStrategy;
         break;
     }
     return fulfillmentStrategy;

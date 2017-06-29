@@ -6,11 +6,14 @@ import com.github.pradyothadavi.ApiAiAgentInteractorModule;
 import com.github.pradyothadavi.KiranaStoreBundle;
 import com.github.pradyothadavi.KiranaStoreConfiguration;
 import com.github.pradyothadavi.KiranaStoreModule;
+import com.github.pradyothadavi.datastore.entity.Product;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import in.adavi.pradyot.web.assistant.service.application.filter.FilterRegistration;
 import in.adavi.pradyot.web.assistant.service.web.ApiAiResource;
 import io.dropwizard.Application;
+import io.dropwizard.db.PooledDataSourceFactory;
+import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
@@ -24,6 +27,13 @@ import org.slf4j.LoggerFactory;
 public class WebAssistantApplication extends Application<WebAssistantConfiguration> {
   
   private static final Logger logger = LoggerFactory.getLogger(WebAssistantApplication.class);
+  
+  private HibernateBundle<WebAssistantConfiguration> hibernateBundle = new HibernateBundle<WebAssistantConfiguration>(Product.class) {
+    @Override
+    public PooledDataSourceFactory getDataSourceFactory(WebAssistantConfiguration webAssistantConfiguration) {
+      return webAssistantConfiguration.getDatabase();
+    }
+  };
   
   @Override
   public void initialize(Bootstrap<WebAssistantConfiguration> bootstrap) {
@@ -47,12 +57,14 @@ public class WebAssistantApplication extends Application<WebAssistantConfigurati
         return webAssistantConfiguration.getKiranaStoreConfiguration();
       }
     });
+    
+    bootstrap.addBundle(hibernateBundle);
   }
   
   @Override
   public void run(WebAssistantConfiguration webAssistantConfiguration, Environment environment) throws Exception {
     
-    Injector injector = Guice.createInjector(new WebAssistantModule(webAssistantConfiguration),
+    Injector injector = Guice.createInjector(new WebAssistantModule(webAssistantConfiguration,hibernateBundle),
                                              new ApiAiAgentInteractorModule(webAssistantConfiguration.getApiAiAgentInteractorConfiguration()),
                                              new KiranaStoreModule(webAssistantConfiguration.getKiranaStoreConfiguration()));
   
