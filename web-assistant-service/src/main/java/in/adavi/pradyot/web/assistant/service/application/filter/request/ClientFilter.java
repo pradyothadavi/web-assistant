@@ -32,6 +32,7 @@ public class ClientFilter implements ContainerRequestFilter {
     flipkartClients.addAll(commonClients);
     
     agentClientMappingWhitelist.put("Flipkart", flipkartClients);
+    agentClientMappingWhitelist.put("web-assistant", flipkartClients);
   }
   
   @Override

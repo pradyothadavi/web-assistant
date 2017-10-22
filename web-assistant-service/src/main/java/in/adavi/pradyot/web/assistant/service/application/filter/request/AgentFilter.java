@@ -22,6 +22,7 @@ public class AgentFilter implements ContainerRequestFilter {
   
   static {
     whitelistedAgentIds.add("Flipkart");
+    whitelistedAgentIds.add("web-assistant");
   }
   
   @Override

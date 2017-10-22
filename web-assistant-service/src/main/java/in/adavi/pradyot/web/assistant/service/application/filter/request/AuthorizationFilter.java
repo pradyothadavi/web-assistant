@@ -24,6 +24,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
   
   static {
     agentIdToKeyMapping.put("Flipkart", "Flipkart");
+    agentIdToKeyMapping.put("web-assistant", "web-assistant");
   }
   
   @Override
