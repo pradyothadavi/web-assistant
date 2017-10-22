@@ -5,9 +5,6 @@ import com.github.pradyothadavi.api.ai.model.Event;
 import com.github.pradyothadavi.api.ai.request.QueryRequest;
 import com.github.pradyothadavi.api.ai.response.QueryResponse;
 import com.github.pradyothadavi.core.AiConversationService;
-import com.google.cloud.translate.Translate;
-import com.google.cloud.translate.TranslateOptions;
-import com.google.cloud.translate.Translation;
 import com.google.inject.Inject;
 import in.adavi.pradyot.web.assistant.api.model.Chat;
 import in.adavi.pradyot.web.assistant.api.model.User;
@@ -87,17 +84,17 @@ public class KiranaStoreResource {
     
     UserPreference userPreference = userService.getPreference(user);
     String translatedText = queryResponse.getResult().getFulfillment().getSpeech();
-    try {
-      Translate translate = TranslateOptions.getDefaultInstance().getService();
-      Translation translation = translate.translate(
-        queryResponse.getResult().getFulfillment().getSpeech(),
-        Translate.TranslateOption.sourceLanguage("en"),
-        Translate.TranslateOption.targetLanguage(userPreference.getLanguage().getLanguageTag())
-      );
-      translatedText = translation.getTranslatedText();
-    } catch (Exception e){
-      logger.error("Translation Exception : {}",e);
-    }
+//    try {
+//      Translate translate = TranslateOptions.getDefaultInstance().getService();
+//      Translation translation = translate.translate(
+//        queryResponse.getResult().getFulfillment().getSpeech(),
+//        Translate.TranslateOption.sourceLanguage("en"),
+//        Translate.TranslateOption.targetLanguage(userPreference.getLanguage().getLanguageTag())
+//      );
+//      translatedText = translation.getTranslatedText();
+//    } catch (Exception e){
+//      logger.error("Translation Exception : {}",e);
+//    }
     
     if(null != queryResponse)
     {

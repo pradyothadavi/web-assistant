@@ -48,12 +48,7 @@ apiAiAgentInteractor:
     nluPlatformUrl: https://api.api.ai/api/
     apiVersion: 20150910
 
-database:
-  driverClass: com.mysql.cj.jdbc.Driver
-  url: jdbc:mysql://localhost:3306/kirana_store
-  user: root
-  password:
-  initialSize: 10
+asanaAccessToken: 0/cb98fa887a02bbb9d183bbf582a694ae
 
 kiranaStoreConfiguration:
 

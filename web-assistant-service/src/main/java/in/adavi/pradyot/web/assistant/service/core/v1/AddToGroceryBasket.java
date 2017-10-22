@@ -3,7 +3,6 @@ package in.adavi.pradyot.web.assistant.service.core.v1;
 import com.github.pradyothadavi.api.ai.model.Result;
 import com.github.pradyothadavi.api.ai.response.FulfillmentServiceResponse;
 import com.github.pradyothadavi.api.ai.response.QueryResponse;
-import com.github.pradyothadavi.core.ProductService;
 import com.github.pradyothadavi.google.action.model.ExpectedInput;
 import com.github.pradyothadavi.google.action.model.ExpectedIntent;
 import com.github.pradyothadavi.google.action.model.InputPrompt;
@@ -13,7 +12,6 @@ import com.github.pradyothadavi.google.action.model.SimpleResponse;
 import com.github.pradyothadavi.google.action.response.AppResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.inject.Inject;
 import in.adavi.pradyot.web.assistant.api.response.GoogleActionResponse;
 import in.adavi.pradyot.web.assistant.service.core.AddToBasketStrategy;
 import in.adavi.pradyot.web.assistant.service.datastore.entity.GroceryItem;
@@ -37,16 +35,16 @@ public class AddToGroceryBasket extends AddToBasketStrategy {
   
   private Map<String,GroceryList> groceryListMap;
   
-  @Inject
-  private ProductService productService;
-
-  public ProductService getProductService() {
-    return productService;
-  }
-
-  public void setProductService(ProductService productService) {
-    this.productService = productService;
-  }
+//  @Inject
+//  private ProductService productService;
+//
+//  public ProductService getProductService() {
+//    return productService;
+//  }
+//
+//  public void setProductService(ProductService productService) {
+//    this.productService = productService;
+//  }
   
   @Override
   protected boolean addToCart() {
