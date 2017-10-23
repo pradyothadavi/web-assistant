@@ -8,6 +8,7 @@ import in.adavi.pradyot.web.assistant.service.application.context.ApiAiFulfillme
 import in.adavi.pradyot.web.assistant.service.application.fulfillment.FulfillmentStrategy;
 import in.adavi.pradyot.web.assistant.service.application.fulfillment.Webhook;
 import in.adavi.pradyot.web.assistant.service.core.AddToBasketStrategy;
+import in.adavi.pradyot.web.assistant.service.core.SaveShoppingListStrategy;
 import in.adavi.pradyot.web.assistant.service.core.WelcomeStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +22,14 @@ public class ApiAiWebhook extends Webhook {
   
   private WelcomeStrategy welcomeStrategy;
   private AddToBasketStrategy addToBasketStrategy;
+  private SaveShoppingListStrategy saveShoppingListStrategy;
   
   @Inject
-  public ApiAiWebhook(WelcomeStrategy welcomeStrategy, AddToBasketStrategy addToBasketStrategy) {
+  public ApiAiWebhook(WelcomeStrategy welcomeStrategy, AddToBasketStrategy addToBasketStrategy,
+                      SaveShoppingListStrategy saveShoppingListStrategy) {
     this.welcomeStrategy = welcomeStrategy;
     this.addToBasketStrategy = addToBasketStrategy;
+    this.saveShoppingListStrategy = saveShoppingListStrategy;
   }
   
   @Override
@@ -37,10 +41,27 @@ public class ApiAiWebhook extends Webhook {
       case "Flipkart":
         fulfillmentStrategy = getFlipkartFulfillmentStrategy(queryResponse);
         break;
+      case "web-assistant":
+        fulfillmentStrategy = getWebAssistantFulfillmentStrategy(queryResponse);
+        break;
     }
     return fulfillmentStrategy;
   }
-  
+
+  private FulfillmentStrategy getWebAssistantFulfillmentStrategy(QueryResponse queryResponse) {
+    FulfillmentStrategy fulfillmentStrategy = null;
+    Result result = queryResponse.getResult();
+    switch (result.getAction()){
+      case "input.welcome":
+        fulfillmentStrategy = welcomeStrategy;
+        break;
+      case "add.shopping.list":
+        fulfillmentStrategy = saveShoppingListStrategy;
+        break;
+    }
+    return fulfillmentStrategy;
+  }
+
   private FulfillmentStrategy getFlipkartFulfillmentStrategy(QueryResponse queryResponse) {
     FulfillmentStrategy fulfillmentStrategy = null;
     Result result = queryResponse.getResult();

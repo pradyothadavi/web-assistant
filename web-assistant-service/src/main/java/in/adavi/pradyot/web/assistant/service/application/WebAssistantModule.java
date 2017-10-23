@@ -3,16 +3,10 @@ package in.adavi.pradyot.web.assistant.service.application;
 import com.github.pradyothadavi.core.AiConversationService;
 import com.github.pradyothadavi.core.v1.TextConversation;
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import in.adavi.pradyot.web.assistant.service.application.fulfillment.Webhook;
-import in.adavi.pradyot.web.assistant.service.core.AddToBasketStrategy;
-import in.adavi.pradyot.web.assistant.service.core.FulfillmentService;
-import in.adavi.pradyot.web.assistant.service.core.UserService;
-import in.adavi.pradyot.web.assistant.service.core.WelcomeStrategy;
-import in.adavi.pradyot.web.assistant.service.core.v1.AddToGroceryBasket;
-import in.adavi.pradyot.web.assistant.service.core.v1.ApiAiWebhook;
-import in.adavi.pradyot.web.assistant.service.core.v1.GroceryFulfillment;
-import in.adavi.pradyot.web.assistant.service.core.v1.GroceryStoreWelcome;
-import in.adavi.pradyot.web.assistant.service.core.v1.UserManager;
+import in.adavi.pradyot.web.assistant.service.core.*;
+import in.adavi.pradyot.web.assistant.service.core.v1.*;
 import in.adavi.pradyot.web.assistant.service.datastore.IGroceryFulfillmentDao;
 import in.adavi.pradyot.web.assistant.service.datastore.ISpeechResponseDao;
 import in.adavi.pradyot.web.assistant.service.datastore.IUserDao;
@@ -29,13 +23,20 @@ public class WebAssistantModule extends AbstractModule {
   public WebAssistantModule(WebAssistantConfiguration webAssistantConfiguration) {
     this.webAssistantConfiguration = webAssistantConfiguration;
   }
-  
+
+  @Provides
+  public String providesAsanaPersonalAccessToken()
+  {
+    return webAssistantConfiguration.getAsanaAccessToken();
+  }
+
   @Override
   protected void configure() {
     
     bind(Webhook.class).to(ApiAiWebhook.class);
-    bind(WelcomeStrategy.class).to(GroceryStoreWelcome.class);
+    bind(WelcomeStrategy.class).to(WebAssistantWelcome.class);
     bind(AddToBasketStrategy.class).to(AddToGroceryBasket.class);
+    bind(SaveShoppingListStrategy.class).to(AsanaShoppingList.class);
     
     bind(AiConversationService.class).to(TextConversation.class);
     bind(FulfillmentService.class).to(GroceryFulfillment.class);
